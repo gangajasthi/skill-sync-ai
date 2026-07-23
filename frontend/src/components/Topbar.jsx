@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import '../styles/Topbar.css'
 
-function Topbar({ title, subtitle, onMenuClick }) {
+function Topbar({ title, subtitle, onMenuClick, user }) {
   const navigate = useNavigate()
 
   return (
@@ -29,10 +29,29 @@ function Topbar({ title, subtitle, onMenuClick }) {
           <span className="topbar__badge"></span>
         </button>
 
-        <button className="topbar__profile" onClick={() => navigate('/profile')}>
-          <span className="topbar__profile-avatar">PM</span>
-          <span className="topbar__profile-name">Priya Menon</span>
-        </button>
+       <button 
+  className="topbar__profile" 
+  onClick={() => navigate('/profile')}
+>
+
+  <span className="topbar__profile-avatar">
+
+    {
+      user?.name
+      ?.split(" ")
+      .map(word => word[0])
+      .join("")
+    }
+
+  </span>
+
+
+  <span className="topbar__profile-name">
+    {user?.name}
+  </span>
+
+
+</button>
       </div>
     </header>
   )

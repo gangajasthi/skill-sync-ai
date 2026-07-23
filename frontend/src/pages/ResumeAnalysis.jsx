@@ -1,137 +1,145 @@
-import { useState } from 'react'
-import DashboardLayout from '../components/DashboardLayout.jsx'
-import ResumeUploader from '../components/ResumeUploader.jsx'
-import '../styles/ResumeAnalysis.css'
+import { useState } from "react";
+import axios from "axios";
+import DashboardLayout from "../components/DashboardLayout.jsx";
+import "../styles/ResumeAnalysis.css";
 
 
-function ResumeAnalysis() {
+function ResumeAnalysis(){
 
-  const [analysis, setAnalysis] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-
-  const analyzeResume = async (file) => {
-
-    try {
-
-      setLoading(true)
-
-      const formData = new FormData()
-
-      formData.append(
-        "file",
-        file
-      )
+    const [file,setFile] = useState(null);
+    const [loading,setLoading] = useState(false);
+    const [result,setResult] = useState(null);
+    const [error,setError] = useState("");
 
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/upload-resume",
-        {
-          method: "POST",
-          body: formData
-        }
-      )
+    const handleUpload = async()=>{
 
-
-      const data = await response.json()
-
-
-      setAnalysis(data.analysis)
-
-
-    } catch(error){
-
-      console.log(error)
-
-    }
-    finally{
-
-      setLoading(false)
-
-    }
-
-  }
-
-
-
-  return (
-
-    <DashboardLayout 
-      title="Resume Analysis"
-      subtitle="Upload your resume to get an instant AI-powered breakdown."
-    >
-
-      <div className="resume-analysis">
-
-
-        <section className="ra-panel">
-
-          <h2 className="ra-panel__title">
-            Upload Resume
-          </h2>
-
-
-          <ResumeUploader 
-            onAnalyze={analyzeResume}
-          />
-
-
-        </section>
-
-
-
-        {
-          loading && (
-
-            <h3>
-              Analyzing Resume...
-            </h3>
-
-          )
+        if(!file){
+            setError("Please select PDF file");
+            return;
         }
 
 
+        const formData = new FormData();
 
-        {
-          analysis && (
-
-          <section className="ra-result">
-
-
-            <div className="ra-result__score">
+        formData.append(
+            "file",
+            file
+        );
 
 
-              <div className="ra-gauge">
+        try{
 
-                <div className="ra-gauge__label">
-
-                  <span className="ra-gauge__number">
-                    {analysis.ats_score || 0}
-                  </span>
+            setLoading(true);
+            setError("");
 
 
-                  <span className="ra-gauge__unit">
-                    ATS Score
-                  </span>
+            const response = await axios.post(
+                "http://127.0.0.1:8000/upload-resume",
+                formData,
+                {
+                    headers:{
+                        "Content-Type":"multipart/form-data"
+                    }
+                }
+            );
 
+
+            console.log("AI RESPONSE:", response.data);
+
+            setResult(response.data);
+
+
+        }
+        catch(err){
+
+            console.log(err);
+
+            setError("Analysis failed");
+
+        }
+        finally{
+
+            setLoading(false);
+
+        }
+
+    };
+
+
+
+    return (
+
+        <DashboardLayout
+            title="Resume Analysis"
+            subtitle="Upload your resume to get an instant AI-powered breakdown."
+        >
+
+
+        <div className="resume-analysis">
+
+
+            <div className="resume-upload-card">
+
+
+                <div className="upload-icon">
+                    ↑
                 </div>
 
-              </div>
-
-
-
-              <div className="ra-result__summary">
 
                 <h2>
-                  Resume Analysis Complete
+                    Upload Resume
                 </h2>
 
 
                 <p>
-                  AI generated insights from your resume.
+                    PDF format only. AI will analyze your skills,
+                    projects and experience.
                 </p>
 
-              </div>
+
+
+                <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e)=>setFile(e.target.files[0])}
+                />
+
+
+
+                {
+                    file &&
+                    <p>
+                        {file.name}
+                    </p>
+                }
+
+
+
+                <button
+                    className="btn btn--primary"
+                    onClick={handleUpload}
+                >
+
+                {
+                    loading
+                    ?
+                    "Analyzing..."
+                    :
+                    "Analyze Resume"
+                }
+
+
+                </button>
+
+
+
+                {
+                    error &&
+                    <p className="auth__error">
+                        {error}
+                    </p>
+                }
 
 
             </div>
@@ -139,98 +147,174 @@ function ResumeAnalysis() {
 
 
 
-            <div className="ra-columns">
+            {
+                result &&
 
 
-              <div className="ra-card ra-card--strength">
-
-                <h3>
-                  Strengths
-                </h3>
+                <div className="resume-result-card">
 
 
-                <ul>
-
-                  {
-                    analysis.strengths?.map(
-                      item => <li key={item}>{item}</li>
-                    )
-                  }
-
-                </ul>
-
-
-              </div>
+                    <h2>
+                        Resume Insights
+                    </h2>
 
 
 
+                    <div className="profile-info">
 
-              <div className="ra-card ra-card--weakness">
-
-
-                <h3>
-                  Weaknesses
-                </h3>
+                        <h3>
+                            Profile Information
+                        </h3>
 
 
-                <ul>
-
-                  {
-                    analysis.weaknesses?.map(
-                      item => <li key={item}>{item}</li>
-                    )
-                  }
-
-                </ul>
+                        <p>
+                            <b>Name:</b> {result.analysis?.name}
+                        </p>
 
 
-              </div>
+                        <p>
+                            <b>Email:</b> {result.analysis?.email}
+                        </p>
+
+
+                        <p>
+                            <b>Phone:</b> {result.analysis?.phone}
+                        </p>
+
+
+                        <p>
+                            <b>Experience:</b> {result.analysis?.experience || "Not provided"}
+                        </p>
+
+
+                    </div>
 
 
 
 
 
-              <div className="ra-card ra-card--suggestion">
-
-
-                <h3>
-                  Suggestions
-                </h3>
-
-
-                <ul>
-
-                  {
-                    analysis.suggestions?.map(
-                      item => <li key={item}>{item}</li>
-                    )
-                  }
-
-                </ul>
-
-
-              </div>
+                    <h3>
+                        Skills
+                    </h3>
 
 
 
-            </div>
+                    <div className="skill-list">
+
+                    {
+                        result.analysis?.skills?.map(
+                            (skill,index)=>(
+
+                                <span key={index}>
+                                    {skill}
+                                </span>
+
+                            )
+                        )
+                    }
+
+                    </div>
 
 
-          </section>
-
-          )
-
-        }
 
 
-      </div>
+
+                    <h3>
+                        Projects
+                    </h3>
 
 
-    </DashboardLayout>
 
-  )
+
+
+                    {
+                    result.analysis?.projects?.map(
+                    (project,index)=>(
+
+                        <div
+                        key={index}
+                        className="project-box"
+                        >
+
+
+                            <h3>
+                                {project.title}
+                            </h3>
+
+
+
+                            {
+                            (project.tech_stack || project.technologies) &&
+
+                            <p className="project-tech">
+
+                                <strong>
+                                    Technologies:
+                                </strong>{" "}
+
+                                {
+                                    project.tech_stack ||
+                                    project.technologies?.join(", ")
+                                }
+
+                            </p>
+
+                            }
+
+
+
+
+                            <ul className="project-details">
+
+
+                            {
+                            (project.details || project.description || []).map(
+                            (detail,i)=>(
+
+                                <li key={i}>
+
+                                {
+                                    typeof detail === "string"
+                                    ?
+                                    detail
+                                    :
+                                    detail.description
+                                }
+
+                                </li>
+
+                            ))
+
+                            }
+
+
+                            </ul>
+
+
+
+                        </div>
+
+                    ))
+
+                    }
+
+
+
+                </div>
+
+
+            }
+
+
+
+        </div>
+
+
+        </DashboardLayout>
+
+    )
 
 }
 
 
-export default ResumeAnalysis
+export default ResumeAnalysis;
