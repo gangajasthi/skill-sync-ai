@@ -1,0 +1,120 @@
+.skill-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sg-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.sg-section__header h2 {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.sg-section__count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-accent-green);
+  background: rgba(113, 121, 96, 0.12);
+  padding: 5px 14px;
+  border-radius: 999px;
+}
+
+.sg-section__count--gap {
+  color: var(--color-primary-dark);
+  background: rgba(154, 129, 222, 0.12);
+}
+
+.sg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.sg-recommend {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 26px;
+}
+
+.sg-recommend h2 {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 18px;
+}
+
+.sg-recommend__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sg-recommend__card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--color-card);
+}
+
+.sg-recommend__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.sg-recommend__title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.sg-recommend__sub {
+  font-size: 0.78rem;
+  color: var(--color-paragraph);
+}
+
+.sg-recommend__card > div {
+  flex: 1;
+}
+
+.sg-recommend__btn {
+  padding: 8px 20px;
+  font-size: 0.82rem;
+  background: #fff;
+}
+
+@media (max-width: 980px) {
+  .sg-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .sg-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sg-recommend__card {
+    flex-wrap: wrap;
+  }
+
+  .sg-recommend__btn {
+    width: 100%;
+  }
+}
