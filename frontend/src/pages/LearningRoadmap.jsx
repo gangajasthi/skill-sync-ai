@@ -1,63 +1,192 @@
-import { useState } from 'react'
-import DashboardLayout from '../components/DashboardLayout.jsx'
-import RoadmapCard from '../components/RoadmapCard.jsx'
-import '../styles/LearningRoadmap.css'
+import { useState } from "react";
+import DashboardLayout from "../components/DashboardLayout.jsx";
+import RoadmapCard from "../components/RoadmapCard.jsx";
+import { generateRoadmap } from "../services/roadmapService.js";
+import "../styles/LearningRoadmap.css";
 
-const WEEKLY_PLAN = [
-  { period: 'Week 1', title: 'TypeScript Fundamentals', status: 'done', tasks: ['Complete TypeScript basics course', 'Convert one React component to TS', 'Read the official handbook chapters 1-3'] },
-  { period: 'Week 2', title: 'Testing with Jest & RTL', status: 'done', tasks: ['Write unit tests for 3 components', 'Learn mocking and snapshot testing', 'Add tests to your portfolio project'] },
-  { period: 'Week 3', title: 'Docker for Frontend Devs', status: 'active', tasks: ['Containerize your React app', 'Write a Dockerfile and docker-compose file', 'Deploy locally with Docker'] },
-  { period: 'Week 4', title: 'System Design Basics', status: 'upcoming', tasks: ['Study client-server architecture', 'Learn caching and load balancing basics', 'Design a mock URL shortener'] },
-]
-
-const MONTHLY_PLAN = [
-  { period: 'Month 1', title: 'Core Technical Foundations', status: 'done', tasks: ['TypeScript, Testing, and Docker fundamentals', 'Rebuild portfolio project using new skills'] },
-  { period: 'Month 2', title: 'System Design & Advanced React', status: 'active', tasks: ['System design fundamentals', 'Advanced React patterns (context, performance)'] },
-  { period: 'Month 3', title: 'Interview Readiness', status: 'upcoming', tasks: ['Daily mock interviews', 'Mock system design rounds', 'Apply to 20+ matched roles'] },
-]
 
 function LearningRoadmap() {
-  const [view, setView] = useState('weekly')
-  const plan = view === 'weekly' ? WEEKLY_PLAN : MONTHLY_PLAN
-  const completed = plan.filter((p) => p.status === 'done').length
+
+  const [roadmap, setRoadmap] = useState([]);
+  const [missingSkills, setMissingSkills] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+  const handleGenerate = async () => {
+
+    try {
+
+      setLoading(true);
+
+
+      const data = {
+        role: "Frontend Developer",
+
+        skills: [
+          "React",
+          "JavaScript",
+          "Python"
+        ],
+
+        experience: "Student"
+      };
+
+
+      const response = await generateRoadmap(data);
+
+
+      setRoadmap(response.weekly_plan || []);
+
+      setMissingSkills(response.missing_skills || []);
+
+
+    } catch (error) {
+
+      console.log("Roadmap generation failed:", error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
 
   return (
-    <DashboardLayout title="Learning Roadmap" subtitle="Your personalized path to closing every skill gap.">
+
+    <DashboardLayout
+      title="Learning Roadmap"
+      subtitle="Your personalized path to closing every skill gap."
+    >
+
+
       <div className="roadmap-page">
+
+
         <div className="roadmap-toolbar">
-          <div className="roadmap-toggle">
-            <button
-              className={view === 'weekly' ? 'roadmap-toggle__btn roadmap-toggle__btn--active' : 'roadmap-toggle__btn'}
-              onClick={() => setView('weekly')}
-            >
-              Weekly Plan
-            </button>
-            <button
-              className={view === 'monthly' ? 'roadmap-toggle__btn roadmap-toggle__btn--active' : 'roadmap-toggle__btn'}
-              onClick={() => setView('monthly')}
-            >
-              Monthly Plan
-            </button>
-          </div>
-          <div className="roadmap-progress">
-            <span>{completed}/{plan.length} milestones complete</span>
-            <div className="roadmap-progress__bar">
-              <div
-                className="roadmap-progress__fill"
-                style={{ width: `${(completed / plan.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
+
+
+          <button
+            className="btn btn--primary"
+            onClick={handleGenerate}
+          >
+
+            {loading 
+              ? "Generating..."
+              : "Generate My Roadmap"
+            }
+
+          </button>
+
+
         </div>
 
-        <div className="roadmap-timeline">
-          {plan.map((item) => (
-            <RoadmapCard key={item.period} {...item} />
-          ))}
-        </div>
+
+
+        {
+          roadmap.length > 0 && (
+
+            <div className="roadmap-timeline">
+
+
+              {
+                roadmap.map((item,index)=>(
+
+                  <RoadmapCard
+
+                    key={index}
+
+                    period={item.week}
+
+                    title={item.title}
+
+                    status="active"
+
+                    tasks={item.tasks}
+
+                  />
+
+                ))
+              }
+
+
+            </div>
+
+          )
+        }
+
+
+
+        {
+          missingSkills.length > 0 && (
+
+            <div className="missing-skills">
+
+
+              <h2>
+                Skills You Need To Learn
+              </h2>
+
+
+              <div className="skills-list">
+
+
+                {
+                  missingSkills.map((skill,index)=>(
+
+                    <span 
+                      key={index}
+                      className="skill-tag"
+                    >
+
+                      {skill}
+
+                    </span>
+
+                  ))
+                }
+
+
+              </div>
+
+
+            </div>
+
+          )
+        }
+
+
+
+        {
+          !loading && roadmap.length===0 && (
+
+            <div className="empty-roadmap">
+
+              <h3>
+                Generate your AI learning roadmap
+              </h3>
+
+              <p>
+                Upload your resume and get a personalized skill improvement plan.
+              </p>
+
+
+            </div>
+
+          )
+        }
+
+
+
       </div>
+
+
     </DashboardLayout>
-  )
+
+  );
+
 }
 
-export default LearningRoadmap
+
+export default LearningRoadmap;
