@@ -1,0 +1,56 @@
+.resume-uploader__zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 52px 24px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.resume-uploader__zone:hover,
+.resume-uploader__zone--active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.resume-uploader__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.resume-uploader__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.resume-uploader__hint {
+  font-size: 0.85rem;
+  color: var(--color-paragraph);
+  margin-bottom: 14px;
+}
+
+.resume-uploader__browse {
+  background: #fff;
+}
+
+.resume-uploader__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}

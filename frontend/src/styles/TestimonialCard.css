@@ -1,0 +1,67 @@
+.testimonial-card {
+  padding: 30px 26px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(229, 228, 233, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.testimonial-card__stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+
+.star {
+  color: var(--color-border);
+  font-size: 1rem;
+}
+
+.star--filled {
+  color: var(--color-primary);
+}
+
+.testimonial-card__quote {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--color-paragraph);
+  margin-bottom: 24px;
+}
+
+.testimonial-card__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonial-card__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.testimonial-card__name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.testimonial-card__role {
+  font-size: 0.8rem;
+  color: var(--color-paragraph);
+}

@@ -1,0 +1,1 @@
+This project uses emoji/CSS-based iconography and gradients instead of binary image assets, keeping the bundle lightweight. Drop real logo/illustration files here (e.g. logo.svg, hero-illustration.png) and reference them with standard ES imports if you want to swap in custom artwork.
