@@ -89,12 +89,164 @@
 #     "analysis": analysis
 # }
 
+# from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+# from sqlalchemy.orm import Session
+
+# from app.database import get_db
+# from app.auth import get_current_user
+# from app.models import ResumeAnalysis, User
+# from app.services.gemini_service import analyze_resume
+# from app.services.resume_parser import (
+#     extract_text_from_pdf,
+#     extract_text_from_docx
+# )
+
+# import os
+# import shutil
+# from uuid import uuid4
+
+
+# router = APIRouter()
+
+
+# UPLOAD_FOLDER = "uploads/resumes"
+
+# os.makedirs(
+#     UPLOAD_FOLDER,
+#     exist_ok=True
+# )
+
+
+# ALLOWED_EXTENSIONS = [
+#     ".pdf",
+#     ".docx"
+# ]
+
+
+# @router.post("/upload-resume")
+# async def upload_resume(
+#     file: UploadFile = File(...),
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+
+#     # Validate file type
+
+#     extension = os.path.splitext(file.filename)[1].lower()
+
+
+#     if extension not in ALLOWED_EXTENSIONS:
+
+#         raise HTTPException(
+#             status_code=400,
+#             detail="Only PDF and DOCX files are allowed."
+#         )
+
+
+
+#     # Generate unique filename
+
+#     unique_filename = f"{uuid4()}{extension}"
+
+
+#     file_path = os.path.join(
+#         UPLOAD_FOLDER,
+#         unique_filename
+#     )
+
+
+
+#     # Save uploaded file
+
+#     with open(file_path, "wb") as buffer:
+
+#         shutil.copyfileobj(
+#             file.file,
+#             buffer
+#         )
+
+
+
+#     # Extract resume text
+
+#     if extension == ".pdf":
+
+#         resume_text = extract_text_from_pdf(
+#             file_path
+#         )
+
+#     else:
+
+#         resume_text = extract_text_from_docx(
+#             file_path
+#         )
+
+
+
+#     # Gemini Resume Analysis
+
+#     analysis = analyze_resume(
+#         resume_text
+#     )
+
+
+
+#     # Save analysis into database
+
+#     resume_analysis = ResumeAnalysis(
+
+#     user_id=current_user.id,
+
+#     name=analysis.get("name"),
+
+#     email=analysis.get("email"),
+
+#     ats_score=analysis.get("ats_score",0),
+
+#     skills=analysis.get("skills",[]),
+
+#     projects=analysis.get("projects",[]),
+
+#     strengths=analysis.get("strengths",[]),
+
+#     weaknesses=analysis.get("weaknesses",[]),
+
+#     suggestions=analysis.get("suggestions",[])
+# )
+
+
+
+#     db.add(
+#         resume_analysis
+#     )
+
+#     db.commit()
+
+#     db.refresh(
+#         resume_analysis
+#     )
+
+
+
+#     return {
+
+#         "message": "Resume uploaded successfully",
+
+#         "filename": unique_filename,
+
+#         "original_filename": file.filename,
+
+#         "analysis": analysis
+
+#     }
+
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.auth import get_current_user
 from app.models import ResumeAnalysis, User
+
 from app.services.gemini_service import analyze_resume
 from app.services.resume_parser import (
     extract_text_from_pdf,
@@ -106,15 +258,19 @@ import shutil
 from uuid import uuid4
 
 
+
 router = APIRouter()
 
 
+
 UPLOAD_FOLDER = "uploads/resumes"
+
 
 os.makedirs(
     UPLOAD_FOLDER,
     exist_ok=True
 )
+
 
 
 ALLOWED_EXTENSIONS = [
@@ -123,57 +279,80 @@ ALLOWED_EXTENSIONS = [
 ]
 
 
+
+
+
+# ==================================
+# UPLOAD RESUME
+# ==================================
+
+
 @router.post("/upload-resume")
 async def upload_resume(
+
     file: UploadFile = File(...),
+
     db: Session = Depends(get_db),
+
     current_user: User = Depends(get_current_user)
+
 ):
 
-    # Validate file type
 
-    extension = os.path.splitext(file.filename)[1].lower()
+    extension = os.path.splitext(
+        file.filename
+    )[1].lower()
+
 
 
     if extension not in ALLOWED_EXTENSIONS:
 
         raise HTTPException(
+
             status_code=400,
+
             detail="Only PDF and DOCX files are allowed."
+
         )
 
 
 
-    # Generate unique filename
 
     unique_filename = f"{uuid4()}{extension}"
 
 
+
     file_path = os.path.join(
+
         UPLOAD_FOLDER,
+
         unique_filename
+
     )
 
 
 
-    # Save uploaded file
 
-    with open(file_path, "wb") as buffer:
+    with open(file_path,"wb") as buffer:
 
         shutil.copyfileobj(
+
             file.file,
+
             buffer
+
         )
 
 
 
-    # Extract resume text
+
 
     if extension == ".pdf":
 
         resume_text = extract_text_from_pdf(
             file_path
         )
+
 
     else:
 
@@ -183,36 +362,70 @@ async def upload_resume(
 
 
 
-    # Gemini Resume Analysis
+
 
     analysis = analyze_resume(
+
         resume_text
+
     )
 
 
 
-    # Save analysis into database
+
+
 
     resume_analysis = ResumeAnalysis(
 
-    user_id=current_user.id,
 
-    name=analysis.get("name"),
+        user_id=current_user.id,
 
-    email=analysis.get("email"),
 
-    ats_score=analysis.get("ats_score",0),
+        name=analysis.get("name"),
 
-    skills=analysis.get("skills",[]),
 
-    projects=analysis.get("projects",[]),
+        email=analysis.get("email"),
 
-    strengths=analysis.get("strengths",[]),
 
-    weaknesses=analysis.get("weaknesses",[]),
+        ats_score=analysis.get(
+            "ats_score",
+            0
+        ),
 
-    suggestions=analysis.get("suggestions",[])
-)
+
+        skills=analysis.get(
+            "skills",
+            []
+        ),
+
+
+        projects=analysis.get(
+            "projects",
+            []
+        ),
+
+
+        strengths=analysis.get(
+            "strengths",
+            []
+        ),
+
+
+        weaknesses=analysis.get(
+            "weaknesses",
+            []
+        ),
+
+
+        suggestions=analysis.get(
+            "suggestions",
+            []
+        )
+
+
+    )
+
+
 
 
 
@@ -220,7 +433,9 @@ async def upload_resume(
         resume_analysis
     )
 
+
     db.commit()
+
 
     db.refresh(
         resume_analysis
@@ -228,14 +443,141 @@ async def upload_resume(
 
 
 
+
+
     return {
 
-        "message": "Resume uploaded successfully",
 
-        "filename": unique_filename,
+        "message":
+        "Resume uploaded successfully",
 
-        "original_filename": file.filename,
 
-        "analysis": analysis
+        "filename":
+        unique_filename,
+
+
+        "original_filename":
+        file.filename,
+
+
+        "analysis":
+        analysis
+
+
+    }
+
+
+
+
+
+
+
+
+
+# ==================================
+# GET RESUME ANALYSIS
+# ==================================
+
+
+
+@router.get("/resume-analysis")
+def get_resume_analysis(
+
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+
+):
+
+
+    resume = db.query(
+        ResumeAnalysis
+    ).filter(
+
+        ResumeAnalysis.user_id == current_user.id
+
+    ).order_by(
+
+        ResumeAnalysis.id.desc()
+
+    ).first()
+
+
+
+
+
+
+    if not resume:
+
+
+        return {
+
+
+            "message":
+            "No resume found",
+
+
+            "ats_score":
+            0,
+
+
+            "skills":
+            [],
+
+
+            "projects":
+            [],
+
+
+            "strengths":
+            [],
+
+
+            "weaknesses":
+            [],
+
+
+            "suggestions":
+            []
+
+
+        }
+
+
+
+
+
+
+
+    return {
+
+
+        "id":
+        resume.id,
+
+
+        "ats_score":
+        resume.ats_score,
+
+
+        "skills":
+        resume.skills or [],
+
+
+        "projects":
+        resume.projects or [],
+
+
+        "strengths":
+        resume.strengths or [],
+
+
+        "weaknesses":
+        resume.weaknesses or [],
+
+
+        "suggestions":
+        resume.suggestions or []
+
 
     }

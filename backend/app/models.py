@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, JSON, ForeignKey
-from .database import Base
 
+from sqlalchemy import Column, Integer, String, JSON, ForeignKey, DateTime
+from datetime import datetime
+
+from .database import Base
 class User(Base):
 
     __tablename__ = "users"
@@ -128,4 +130,31 @@ class SkillGap(Base):
 
     courses = Column(
         JSON
+    )
+class InterviewHistory(Base):
+    
+    __tablename__ = "interview_history"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id")
+    )
+
+    category = Column(
+        String(100)
+    )
+
+    score = Column(
+        Integer
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
     )

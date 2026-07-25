@@ -222,9 +222,9 @@ def get_skill_gap(
     # User resume skills
 
     user_skills = [
-        skill.lower()
-        for skill in resume.skills
-    ]
+    skill.lower().strip()
+    for skill in resume.skills
+]
 
 
 
@@ -236,8 +236,14 @@ def get_skill_gap(
 
     for skill in required_skills:
 
+        skill_lower = skill.lower()
 
-        if skill.lower() in user_skills:
+        matched_skill = any(
+            skill_lower in user_skill or
+            user_skill in skill_lower
+            for user_skill in user_skills
+    )
+        if matched_skill:
 
             matched.append(
                 {

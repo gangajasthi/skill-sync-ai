@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app import models
 from app.routes import auth, resume, roadmap, dashboard, skill_gap
+from app.routes import interview
 
 
 app = FastAPI()
@@ -32,6 +33,7 @@ app.include_router(resume.router)
 app.include_router(roadmap.router)
 app.include_router(dashboard.router)
 app.include_router(skill_gap.router)
+app.include_router(interview.router)
 
 @app.get("/")
 def home():
