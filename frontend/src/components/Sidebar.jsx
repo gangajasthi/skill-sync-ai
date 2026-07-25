@@ -38,11 +38,6 @@ function Sidebar({ open, onClose }) {
         </nav>
 
         <div className="sidebar__footer">
-          <div className="sidebar__upgrade">
-            <p className="sidebar__upgrade-title">Go Premium</p>
-            <p className="sidebar__upgrade-sub">Unlock unlimited mock interviews</p>
-            <button className="btn btn--primary sidebar__upgrade-btn">Upgrade</button>
-          </div>
           <button className="sidebar__logout" onClick={() => navigate('/login')}>
             <span>⎋</span> Logout
           </button>
