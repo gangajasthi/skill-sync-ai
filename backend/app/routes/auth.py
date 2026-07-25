@@ -75,7 +75,8 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
     new_user = User(
         name=user.name,
         email=user.email,
-        password=hashed_password
+        password=hashed_password,
+        target_role=user.target_role
     )
 
     # Save to database

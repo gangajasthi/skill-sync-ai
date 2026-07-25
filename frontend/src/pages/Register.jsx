@@ -121,8 +121,9 @@ function Register() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
-  })
+    confirmPassword: '',
+    target_role: ''
+})
 
   const [error, setError] = useState('')
 
@@ -155,7 +156,8 @@ function Register() {
         {
           name: form.name,
           email: form.email,
-          password: form.password
+          password: form.password,
+          target_role: form.target_role
         }
       )
 
@@ -317,7 +319,47 @@ navigate('/login')
 
           </label>
 
+          <label className="auth__field">
 
+  <span>
+    Target Role
+  </span>
+
+
+  <select
+    name="target_role"
+    value={form.target_role}
+    onChange={handleChange}
+    required
+  >
+
+    <option value="">
+      Select your career goal
+    </option>
+
+    <option value="Frontend Developer">
+      Frontend Developer
+    </option>
+
+    <option value="Backend Developer">
+      Backend Developer
+    </option>
+
+    <option value="Data Analyst">
+      Data Analyst
+    </option>
+
+    <option value="Full Stack Developer">
+      Full Stack Developer
+    </option>
+
+    <option value="AI Engineer">
+      AI Engineer
+    </option>
+
+  </select>
+
+</label>
 
 
           <label className="auth__field">

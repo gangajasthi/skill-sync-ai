@@ -93,7 +93,8 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import ResumeAnalysis
+from app.auth import get_current_user
+from app.models import ResumeAnalysis, User
 from app.services.gemini_service import analyze_resume
 from app.services.resume_parser import (
     extract_text_from_pdf,
@@ -122,11 +123,11 @@ ALLOWED_EXTENSIONS = [
 ]
 
 
-
 @router.post("/upload-resume")
 async def upload_resume(
     file: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
 
     # Validate file type
@@ -194,41 +195,24 @@ async def upload_resume(
 
     resume_analysis = ResumeAnalysis(
 
-        name=analysis.get("name"),
+    user_id=current_user.id,
 
-        email=analysis.get("email"),
+    name=analysis.get("name"),
 
-        ats_score=analysis.get(
-            "ats_score",
-            0
-        ),
+    email=analysis.get("email"),
 
-        skills=analysis.get(
-            "skills",
-            []
-        ),
+    ats_score=analysis.get("ats_score",0),
 
-        projects=analysis.get(
-            "projects",
-            []
-        ),
+    skills=analysis.get("skills",[]),
 
-        strengths=analysis.get(
-            "strengths",
-            []
-        ),
+    projects=analysis.get("projects",[]),
 
-        weaknesses=analysis.get(
-            "weaknesses",
-            []
-        ),
+    strengths=analysis.get("strengths",[]),
 
-        suggestions=analysis.get(
-            "suggestions",
-            []
-        )
+    weaknesses=analysis.get("weaknesses",[]),
 
-    )
+    suggestions=analysis.get("suggestions",[])
+)
 
 
 

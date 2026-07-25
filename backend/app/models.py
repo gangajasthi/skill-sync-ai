@@ -31,6 +31,8 @@ class User(Base):
         nullable=False
     )
 
+    target_role = Column(String(100), nullable=True)
+
 
 
 
@@ -89,5 +91,41 @@ class ResumeAnalysis(Base):
 
 
     suggestions = Column(
+        JSON
+    )
+class SkillGap(Base):
+
+    __tablename__ = "skill_gap"
+
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id")
+    )
+
+
+    target_role = Column(
+        String(100)
+    )
+
+
+    matched_skills = Column(
+        JSON
+    )
+
+
+    missing_skills = Column(
+        JSON
+    )
+
+
+    courses = Column(
         JSON
     )

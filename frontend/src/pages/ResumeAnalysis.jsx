@@ -465,15 +465,19 @@ function ResumeAnalysis(){
             setError("");
 
 
-            const response = await axios.post(
-                "http://127.0.0.1:8000/upload-resume",
-                formData,
-                {
-                    headers:{
-                        "Content-Type":"multipart/form-data"
-                    }
-                }
-            );
+            const token = localStorage.getItem("token");
+
+
+const response = await axios.post(
+    "http://127.0.0.1:8000/upload-resume",
+    formData,
+    {
+        headers:{
+            "Content-Type":"multipart/form-data",
+            Authorization:`Bearer ${token}`
+        }
+    }
+);
 
 
             console.log("AI RESPONSE:", response.data);

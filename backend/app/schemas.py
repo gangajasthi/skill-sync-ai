@@ -4,6 +4,7 @@ class UserRegister(BaseModel):
     name: str
     email: EmailStr
     password: str
+    target_role: str | None = None
 
 
 class UserLogin(BaseModel):

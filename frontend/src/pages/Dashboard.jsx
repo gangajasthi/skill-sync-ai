@@ -27,6 +27,7 @@ function Dashboard() {
   const navigate = useNavigate()
 
   const [user, setUser] = useState(null)
+  const [dashboardData, setDashboardData] = useState(null)
 
 
   useEffect(() => {
@@ -66,19 +67,68 @@ function Dashboard() {
   }, [navigate])
 
 
+  useEffect(()=>{
 
-  if(!user){
-    return <h2>Loading...</h2>
+  const fetchDashboard = async()=>{
+
+    try{
+
+      const response = await axios.get(
+        "http://127.0.0.1:8000/dashboard"
+      )
+
+      setDashboardData(response.data)
+
+    }
+    catch(error){
+
+      console.log(error)
+
+    }
+
   }
+
+
+  fetchDashboard()
+
+
+},[])
+
+  // if(!user){
+  //   return <h2>Loading...</h2>
+  // }
+
+  const profileCompletion = () => {
+
+  let score = 0;
+
+
+  if(user.name)
+    score += 25;
+
+
+  if(user.email)
+    score += 25;
+
+
+  if(dashboardData.skills_count > 0)
+    score += 25;
+
+
+  if(dashboardData.projects_count > 0)
+    score += 25;
+
+
+  return score;
+
+}
+  if(!user || !dashboardData){
+ return <h2>Loading...</h2>
+}
 
 
 
    return (
-
-  //   <DashboardLayout 
-  //     title={`Welcome back, ${user.name}`}
-  //     subtitle="Here's how your career journey is progressing."
-  //   >
   <DashboardLayout 
         title={`Welcome back, ${user.name}`}
         subtitle="Here's how your career journey is progressing."
@@ -91,12 +141,16 @@ function Dashboard() {
 
         <div className="dash-card dash-card--score">
           <p className="dash-card__label">ATS Score</p>
-          <p className="dash-card__value">
+          {/* <p className="dash-card__value">
             87<span>/100</span>
+          </p> */}
+          <p className="dash-card__value">
+            {dashboardData?.ats_score || 0}
+                <span>/100</span>
           </p>
-          <p className="dash-card__trend dash-card__trend--up">
-            ▲ 6 pts this week
-          </p>
+         <p className="dash-card__trend dash-card__trend--up">
+                  Resume analyzed successfully
+        </p>
         </div>
 
 
@@ -104,7 +158,8 @@ function Dashboard() {
         <div className="dash-card dash-card--gap">
           <p className="dash-card__label">Skills Matched</p>
           <p className="dash-card__value">
-            12<span>/16</span>
+          {dashboardData?.skills_count || 0}
+         <span>/16</span>
           </p>
           <p className="dash-card__trend">
             4 gaps remaining
@@ -225,7 +280,9 @@ function Dashboard() {
 
               <div 
               className="profile-summary__bar-fill"
-              style={{width:'72%'}}
+              style={{
+                      width:`${profileCompletion()}%`
+                    }}
               >
 
               </div>
@@ -234,7 +291,7 @@ function Dashboard() {
 
 
             <p className="profile-summary__complete">
-              Profile 72% complete
+              Profile {profileCompletion()}% complete
             </p>
 
 
